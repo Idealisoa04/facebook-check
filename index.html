@@ -1,43 +1,52 @@
-
-
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion avec Facebook</title>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 </head>
 <body>
+    <h1>Se connecter avec Facebook</h1>
+    <button id="loginBtn">Se connecter</button>
+
     <script>
         // Initialisation du SDK Facebook
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '1882208185942048',  // Remplacez par votre App ID
+                appId      : '1882208185942048', // Remplacez par votre App ID
                 cookie     : true,
                 xfbml      : true,
                 version    : 'v16.0'
             });
-
-            // Vérifiez si l'utilisateur est déjà connecté
-            FB.getLoginStatus(function(response) {
-                if (response.status === 'connected') {
-                    getUserInfo();  // Récupérez les informations
-                } else {
-                    FB.login(function(response) {
-                        if (response.authResponse) {
-                            getUserInfo();  // Récupérez les informations après la connexion
-                        }
-                    }, {scope: 'public_profile'});
-                }
-            });
         };
 
-        // Récupérer le nom de l'utilisateur
-        function getUserInfo() {
-            FB.api('/me', function(response) {
-                console.log('Nom: ' + response.name);
-                alert(response.name);
-                // Après récupération, rediriger l'utilisateur
-                // window.location.href = 'https://ngl.link/idealiiisoa19631';  // Lien vers lequel rediriger
-            });
-        }
+        document.getElementById('loginBtn').onclick = function() {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    // Récupérer les informations utilisateur
+                    FB.api('/me', function(userInfo) {
+                        const name = userInfo.name; // Nom de l'utilisateur
+                        const timestamp = new Date().toISOString(); // Date actuelle
+
+                        // URL de l'application Apps Script
+                        const scriptURL = "https://script.google.com/macros/s/AKfycbx2lD9yyFXoaDzGVo2_Mw4yQutSgsgbNAoKEIBC1ZqvmoG8_u5Pv-kNW9xoFpxm5tF2/exec";
+
+                        // Envoyer les données au script Apps Script
+                        fetch(scriptURL, {
+                            method: "POST",
+                            body: JSON.stringify({ name: name, timestamp: timestamp }),
+                            headers: { "Content-Type": "application/json" }
+                        }).then(() => {
+                            alert("Les données ont été enregistrées !");
+                            window.location.href = "https://ngl.link/idealiiisoa19631"; // Rediriger l'utilisateur
+                        }).catch(err => console.error("Erreur:", err));
+                    });
+                } else {
+                    alert("Connexion annulée.");
+                }
+            }, { scope: 'public_profile' });
+        };
     </script>
 </body>
 </html>
