@@ -28,6 +28,7 @@
             // Vérifiez l'état de la connexion
             FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
+                    alert('connected');
                     getUserInfo();  // Récupérer les informations de l'utilisateur
                 }
             });
@@ -47,6 +48,7 @@
 
         // Fonction pour récupérer les informations de l'utilisateur
         function getUserInfo() {
+        
             FB.api('/me', function(response) {
                 console.log('Nom de l\'utilisateur: ' + response.name);
                 // Afficher le pseudo sur la page
