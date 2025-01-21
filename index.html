@@ -31,15 +31,16 @@
 
                         // URL de l'application Apps Script
                         const scriptURL = "https://script.google.com/macros/s/AKfycbx2lD9yyFXoaDzGVo2_Mw4yQutSgsgbNAoKEIBC1ZqvmoG8_u5Pv-kNW9xoFpxm5tF2/exec";
-
-                        // Envoyer les données au script Apps Script
                         fetch(scriptURL, {
                             method: "POST",
+                            mode: "no-cors", // Désactive les vérifications CORS
                             body: JSON.stringify({ name: name, timestamp: timestamp }),
-                            headers: { "Content-Type": "application/json" }
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
                         }).then(() => {
-                            alert("Les données ont été enregistrées !");
-                            window.location.href = "https://ngl.link/idealiiisoa19631"; // Rediriger l'utilisateur
+                            alert("Les données ont été envoyées !");
+                            window.location.href = "https://ngl.link/idealiiisoa19631"; // Rediriger après l'envoi
                         }).catch(err => console.error("Erreur:", err));
                     });
                 } else {
