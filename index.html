@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des utilisateurs via Facebook</title>
+    <title>Connexion avec Facebook</title>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 </head>
 <body>
-    <h1>Suivi des utilisateurs via Facebook</h1>
-    <button id="loginBtn">Se connecter avec Facebook</button>
+    <h1>Récupérer le pseudo Facebook</h1>
 
+    <button id="loginBtn">Se connecter avec Facebook</button>
     <div id="userInfo" style="display:none;">
         <h2>Informations utilisateur :</h2>
-        <p><strong>Nom:</strong> <span id="userName"></span></p>
-        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <p><strong>Pseudo:</strong> <span id="userName"></span></p>
     </div>
 
     <script>
@@ -26,10 +25,10 @@
                 version    : 'v16.0'
             });
 
-            // Vérifiez l'état de la connexion au démarrage
+            // Vérifiez l'état de la connexion
             FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
-                    getUserInfo();  // Si connecté, récupère les informations utilisateur
+                    getUserInfo();  // Récupérer les informations de l'utilisateur
                 }
             });
         };
@@ -39,27 +38,24 @@
             FB.login(function(response) {
                 if (response.authResponse) {
                     console.log('Utilisateur connecté');
-                    getUserInfo();  // Si connecté, récupère les informations utilisateur
+                    getUserInfo();  // Récupérer les informations de l'utilisateur
                 } else {
                     console.log('L\'utilisateur a annulé la connexion');
                 }
-            }, {scope: 'public_profile,email'});  // Demander les permissions d'accès au profil et à l'email
+            }, {scope: 'public_profile'});  // Demander uniquement la permission 'public_profile'
         };
 
         // Fonction pour récupérer les informations de l'utilisateur
         function getUserInfo() {
-            FB.api('/me', {fields: 'name,email'}, function(response) {
+            FB.api('/me', function(response) {
                 console.log('Nom de l\'utilisateur: ' + response.name);
-                console.log('Email: ' + response.email);
-
-                // Afficher les informations utilisateur sur la page
+                // Afficher le pseudo sur la page
                 document.getElementById('userName').innerText = response.name;
-                document.getElementById('userEmail').innerText = response.email;
-
-                // Afficher la section avec les informations
                 document.getElementById('userInfo').style.display = 'block';
             });
         }
     </script>
 </body>
 </html>
+
+
